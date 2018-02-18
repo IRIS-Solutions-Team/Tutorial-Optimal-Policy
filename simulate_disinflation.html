@@ -1,0 +1,484 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Simulate Disinflation in Optimal Policy Models</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="simulate_disinflation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body { margin-left:5%; margin-right:35% }
+@media print {html body {margin-left:0px; margin-right:0px}}
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+/* tt { font-size: 1.2em; } */
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:1000%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Simulate Disinflation in Optimal Policy Models</h1><!--introduction--><p>Simulate a permanent disinflation in the three types of models (a simple rule, discretionary policy, commitment policy). This experiment shows one of the possible ways how to simulate a permament change in the steady state of a model. It also illustrates the real cost associated with disinflation under different policy assumptions, measured by the sacrifice ratio.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear the Workspace</a></li><li><a href="#2">Load Discretion and Commitment Model Objects</a></li><li><a href="#3">Set Up an Input Database</a></li><li><a href="#4">Simulate Disinflation</a></li><li><a href="#5">Simulate Disinflation with Inflation-Only Objective</a></li><li><a href="#6">Show Variables and Objects Created in This File</a></li><li><a href="#7">Help on IRIS Functions Used in This File</a></li></ul></div><h2 id="1">Clear the Workspace</h2><p>Clear the workspace, close all graphics figures, clear the command window, and check the IRIS version.</p><pre class="codeinput">clear
+close <span class="string">all</span>
+clc
+irisrequired <span class="string">20140319</span>
+</pre><h2 id="2">Load Discretion and Commitment Model Objects</h2><p>Load all three model objects created and saved previously in <tt>read_model</tt>.</p><pre class="codeinput">load <span class="string">MAT/read_models.mat</span> <span class="string">m1</span> <span class="string">m2</span> <span class="string">m3</span>
+</pre><h2 id="3">Set Up an Input Database</h2><p>Disinflation is a permanent change in the steady state of the model. Create first a model object with a higher inflation target, <tt>m3high</tt>, based on the existing model object <tt>m3</tt>. Assign the inflation target a higher value, resolve the model and recompute its steady state. Then, create a database with both inflation and nominal interest rates higher by 1%. This database is then used as an input database in the disinflation experiments below.</p><pre class="codeinput">m3high = m3;
+m3high.targ = m3high.targ + 1;
+m3high = solve(m3high);
+m3high = sstate(m3high);
+
+m3.pi
+m3high.pi
+
+m3.r
+m3high.r
+
+d = sstatedb(m3high, 1:40);
+d
+d.pi
+d.r
+</pre><pre class="codeoutput">
+ans =
+
+    2.0000
+
+
+ans =
+
+    3.0000
+
+
+ans =
+
+    2.0000
+
+
+ans =
+
+    3.0000
+
+
+d = 
+
+  struct with fields:
+
+    Mu_Eq1: [42x1 Series]
+    Mu_Eq2: [42x1 Series]
+         y: [42x1 Series]
+        pi: [42x1 Series]
+         r: [42x1 Series]
+    ttrend: [42x1 Series]
+         e: [41x1 Series]
+         u: [41x1 Series]
+      del1: 0.7000
+      del2: 0.1000
+       sgm: 0.0500
+       alp: 0.6500
+       gam: 0.1000
+       bet: 0.9000
+      lmb1: 0.1000
+      lmb2: 0.1000
+      targ: 3
+        mu: 5
+       rho: 0.8000
+     std_e: 1
+     std_u: 1
+
+
+ans = 
+
+	Series object: 42-by-1
+
+	 0:  3
+	 1:  3
+	 2:  3
+	 3:  3
+	 4:  3
+	 5:  3
+	 6:  3
+	 7:  3
+	 8:  3
+	 9:  3
+	10:  3
+	11:  3
+	12:  3
+	13:  3
+	14:  3
+	15:  3
+	16:  3
+	17:  3
+	18:  3
+	19:  3
+	20:  3
+	21:  3
+	22:  3
+	23:  3
+	24:  3
+	25:  3
+	26:  3
+	27:  3
+	28:  3
+	29:  3
+	30:  3
+	31:  3
+	32:  3
+	33:  3
+	34:  3
+	35:  3
+	36:  3
+	37:  3
+	38:  3
+	39:  3
+	40:  3
+	41:  3
+	'Inflation'
+
+	user data: empty
+
+
+ans = 
+
+	Series object: 42-by-1
+
+	 0:  3
+	 1:  3
+	 2:  3
+	 3:  3
+	 4:  3
+	 5:  3
+	 6:  3
+	 7:  3
+	 8:  3
+	 9:  3
+	10:  3
+	11:  3
+	12:  3
+	13:  3
+	14:  3
+	15:  3
+	16:  3
+	17:  3
+	18:  3
+	19:  3
+	20:  3
+	21:  3
+	22:  3
+	23:  3
+	24:  3
+	25:  3
+	26:  3
+	27:  3
+	28:  3
+	29:  3
+	30:  3
+	31:  3
+	32:  3
+	33:  3
+	34:  3
+	35:  3
+	36:  3
+	37:  3
+	38:  3
+	39:  3
+	40:  3
+	41:  3
+	'Policy Rate'
+
+	user data: empty
+
+</pre><h2 id="4">Simulate Disinflation</h2><p>Run simulations starting from a steady state with higher inflation and higher nominal interest rates (database <tt>d</tt> created above) in models whose steady states see low inflation and low interest rates. Run the simulations in all three models: <tt>m1</tt> (a simple policy rule), <tt>m2</tt> (optimal discretionary policy), and <tt>m3</tt> (optimal commitment policy).</p><p>When reporting the results, add one more graph showing the cumulative output gap (divided by 4 to annualize the quarterly simulation results). This is often called the sacrifice ratio, and it is one of the most important numerical characteristics of policy models. The sacrifice ratio is about 0.8 in all of the model versions here.</p><pre class="codeinput">s1 = simulate(m1, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s2 = simulate(m2, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s1 &amp; s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>, <span class="string">'cumsum(y)/4'</span>});
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Rule'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment'</span> <span class="keyword">...</span>
+);
+
+title(le, <span class="string">'Disinflation'</span>);
+</pre><img vspace="5" hspace="5" src="html-source/simulate_disinflation_01.png" alt=""> <h2 id="5">Simulate Disinflation with Inflation-Only Objective</h2><p>Simulate the same disinflation in optimal policy models with zero weights on output and interest rates, <tt>lmb1</tt> and <tt>lmb2</tt>. In these kinds of theoretical models, the central bank can disinflate immediately by creating a sufficient slack in real economy activity in one single period. The sacrifice ratio is though about double the one observed in the original model versions above.</p><p>As in <tt>simulate_shocks</tt>, create two new model objects, <tt>m2i</tt> and <tt>m3i</tt>, based on the existing optimal policy model objects <tt>m2</tt> and <tt>m3</tt>, respectively. Assign the parameters <tt>lmb1</tt> and <tt>lmb2</tt> zeros solve the model objects with these new parameters and run the disinflation simulation.</p><pre class="codeinput">m2i = m2;
+m2i.lmb1 = 0;
+m2i.lmb2 = 0;
+
+get(m2i, <span class="string">'Parameters'</span>)
+
+m3i = m3;
+m3i.lmb1 = 0;
+m3i.lmb2 = 0;
+
+m2i = solve(m2i);
+m3i = solve(m3i);
+
+s2i = simulate(m2i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3i = simulate(m3i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s2i &amp; s3i;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>, <span class="string">'cumsum(y)/4'</span>});
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion with Only Inflation in Loss Function'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment with Only Inflation in Loss Function'</span> <span class="keyword">...</span>
+);
+
+title(le, <span class="string">'Disinflation with Only Inflation in Loss Function'</span>);
+</pre><pre class="codeoutput">
+ans = 
+
+  struct with fields:
+
+     del1: 0.7000
+     del2: 0.1000
+      sgm: 0.0500
+      alp: 0.6500
+      gam: 0.1000
+      bet: 0.9000
+     lmb1: 0
+     lmb2: 0
+     targ: 2
+       mu: 5
+      rho: 0.8000
+    std_e: 1
+    std_u: 1
+
+</pre><img vspace="5" hspace="5" src="html-source/simulate_disinflation_02.png" alt=""> <h2 id="6">Show Variables and Objects Created in This File</h2><pre class="codeinput">whos
+</pre><pre class="codeoutput">  Name        Size            Bytes  Class                                  Attributes
+
+  ans         1x1                 8  matlab.ui.Figure                                 
+  d           1x1              8054  struct                                           
+  le          1x1                 8  matlab.graphics.illustration.Legend              
+  m1          1x1             21918  model                                            
+  m2          1x1             28946  model                                            
+  m2i         1x1             28882  model                                            
+  m3          1x1             30352  model                                            
+  m3high      1x1             30352  model                                            
+  m3i         1x1             30352  model                                            
+  s           1x1             11756  struct                                           
+  s1          1x1              6602  struct                                           
+  s2          1x1              7990  struct                                           
+  s2i         1x1              7990  struct                                           
+  s3          1x1              7990  struct                                           
+  s3i         1x1              7990  struct                                           
+
+</pre><h2 id="7">Help on IRIS Functions Used in This File</h2><pre>  help model
+  help model/model
+  help model/subsasgn
+  help model/solve
+  help model/sstate
+  help modle/sstatedb
+  help model/simulate
+  help dbase/dbplot
+  help visual/hlegend</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Simulate Disinflation in Optimal Policy Models
+%
+% Simulate a permanent disinflation in the three types of models (a simple
+% rule, discretionary policy, commitment policy). This experiment shows one
+% of the possible ways how to simulate a permament change in the steady
+% state of a model. It also illustrates the real cost associated with
+% disinflation under different policy assumptions, measured by the
+% sacrifice ratio.
+%
+
+
+%% Clear the Workspace
+%
+% Clear the workspace, close all graphics figures, clear the command
+% window, and check the IRIS version.
+%
+
+clear
+close all
+clc
+irisrequired 20140319
+
+
+%% Load Discretion and Commitment Model Objects
+%
+% Load all three model objects created and saved previously in
+% |read_model|.
+%
+
+load MAT/read_models.mat m1 m2 m3
+
+
+%% Set Up an Input Database
+%
+% Disinflation is a permanent change in the steady state of the model.
+% Create first a model object with a higher inflation target, |m3high|,
+% based on the existing model object |m3|. Assign the inflation target a
+% higher value, resolve the model and recompute its
+% steady state. Then, create a database with both
+% inflation and nominal interest rates higher by 1%. This database is then
+% used as an input database in the disinflation experiments below.
+%
+
+m3high = m3;
+m3high.targ = m3high.targ + 1; 
+m3high = solve(m3high); 
+m3high = sstate(m3high); 
+
+m3.pi
+m3high.pi
+
+m3.r
+m3high.r
+
+d = sstatedb(m3high, 1:40); 
+d
+d.pi
+d.r
+
+
+%% Simulate Disinflation
+%
+% Run simulations starting from a steady state with higher inflation and
+% higher nominal interest rates (database |d| created above) in models
+% whose steady states see low inflation and low interest rates. Run the
+% simulations in all three models: |m1| (a simple policy rule), |m2|
+% (optimal discretionary policy), and |m3| (optimal commitment policy).
+%
+% When reporting the results, add one more graph showing the
+% cumulative output gap (divided by 4 to annualize the quarterly simulation
+% results). This is often called the sacrifice ratio, and it is one of the
+% most important numerical characteristics of policy models. The sacrifice
+% ratio is about 0.8 in all of the model versions here.
+%
+
+s1 = simulate(m1, d, 1:40, 'AppendPresample=', true);
+s2 = simulate(m2, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3, d, 1:40, 'AppendPresample=', true);
+
+s = s1 & s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r', 'cumsum(y)/4'});
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Rule', ...
+    'Discretion', ...
+    'Commitment' ...
+);
+
+title(le, 'Disinflation');
+
+
+%% Simulate Disinflation with Inflation-Only Objective
+%
+% Simulate the same disinflation in optimal policy models with zero weights
+% on output and interest rates, |lmb1| and |lmb2|. In these kinds of
+% theoretical models, the central bank can disinflate immediately by
+% creating a sufficient slack in real economy activity in one single
+% period. The sacrifice ratio is though about double the one observed in
+% the original model versions above.
+%
+% As in |simulate_shocks|, create two new model objects, |m2i| and |m3i|,
+% based on the existing optimal policy model objects |m2| and |m3|,
+% respectively. Assign the parameters |lmb1| and |lmb2| zeros solve the
+% model objects with these new parameters and run the disinflation
+% simulation.
+%
+
+m2i = m2;
+m2i.lmb1 = 0;
+m2i.lmb2 = 0;
+
+get(m2i, 'Parameters')
+
+m3i = m3;
+m3i.lmb1 = 0;
+m3i.lmb2 = 0;
+
+m2i = solve(m2i);
+m3i = solve(m3i);
+
+s2i = simulate(m2i, d, 1:40, 'AppendPresample=', true);
+s3i = simulate(m3i, d, 1:40, 'AppendPresample=', true);
+
+s = s2i & s3i;
+dbplot(s, 0:40, {'y', 'pi', 'r', 'cumsum(y)/4'});
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Discretion with Only Inflation in Loss Function', ...
+    'Commitment with Only Inflation in Loss Function' ...
+);
+
+title(le, 'Disinflation with Only Inflation in Loss Function');
+
+
+%% Show Variables and Objects Created in This File
+
+whos
+
+
+%% Help on IRIS Functions Used in This File
+%
+%    help model
+%    help model/model
+%    help model/subsasgn
+%    help model/solve
+%    help model/sstate
+%    help modle/sstatedb
+%    help model/simulate
+%    help dbase/dbplot
+%    help visual/hlegend
+%
+
+##### SOURCE END #####
+--></body></html>

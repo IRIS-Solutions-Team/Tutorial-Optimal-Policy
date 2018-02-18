@@ -1,0 +1,460 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Simulate Simple Shocks with Optimal Policy Models</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="simulate_shocks.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body { margin-left:5%; margin-right:35% }
+@media print {html body {margin-left:0px; margin-right:0px}}
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+/* tt { font-size: 1.2em; } */
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:1000%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Simulate Simple Shocks with Optimal Policy Models</h1><!--introduction--><p>Run three shock simulations: a demand shock, an anticipated future demand shock, and a cost-push shock, to illustrate the performance of the three versions of the model (a simple rule, discretionary policy, commitment policy). Simulate the shocks also with loss functions that only include inflation to show that monetary policy can be much more effective in accommodating demand shocks that in offsetting cost-push shocks.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear the Workspace</a></li><li><a href="#2">Load Discretion and Commitment Model Objects</a></li><li><a href="#3">Simulate a Demand Shock</a></li><li><a href="#4">Simulate a Demand Shock with an Inflation-Only Objective</a></li><li><a href="#5">Simulate Anticipated Future Demand Shock</a></li><li><a href="#6">Simulate Anticipated Demand Shock with an Inflation-Only Objective</a></li><li><a href="#7">Simulate a Cost-Push Shock</a></li><li><a href="#8">Simulate a Cost-Push Shock with Inflation-Only Objective</a></li><li><a href="#9">Show Variables and Objects Created in This File</a></li><li><a href="#10">Help on IRIS Functions Used in This File</a></li></ul></div><h2 id="1">Clear the Workspace</h2><p>Clear the workspace, close all graphics figures, clear the command window, and check the IRIS version.</p><pre class="codeinput">clear
+close <span class="string">all</span>
+clc
+irisrequired <span class="string">20140319</span>
+</pre><h2 id="2">Load Discretion and Commitment Model Objects</h2><p>Load all three model objects created and saved previously in <tt>read_model</tt>.</p><pre class="codeinput">load <span class="string">MAT/read_models.mat</span> <span class="string">m1</span> <span class="string">m2</span> <span class="string">m3</span>
+</pre><h2 id="3">Simulate a Demand Shock</h2><p>Simulate a demand shocks starting from a steady-state database. We use the same input database for all three simulations. The input database <tt>d</tt> must be though based on either <tt>m2</tt> or <tt>m3</tt> to include also initial conditions for the Lagrange multipliers (needed in simulating the commitment model <tt>m3</tt>).</p><pre class="codeinput">d = sstatedb(m2, 1:40);
+d.e(1) = 1;
+disp(d)
+
+s1 = simulate(m1, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s2 = simulate(m2, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s1 &amp; s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>}, <span class="string">'Tight='</span>, true);
+
+le = visual.hlegend(<span class="string">'Top'</span>, <span class="string">'Rule'</span>, <span class="string">'Discretion'</span>, <span class="string">'Commitment'</span>);
+title(le, <span class="string">'Demand Shock'</span>);
+</pre><pre class="codeoutput">    Mu_Eq1: [42x1 Series]
+    Mu_Eq2: [42x1 Series]
+         y: [42x1 Series]
+        pi: [42x1 Series]
+         r: [42x1 Series]
+    ttrend: [42x1 Series]
+         e: [41x1 Series]
+         u: [41x1 Series]
+      del1: 0.7000
+      del2: 0.1000
+       sgm: 0.0500
+       alp: 0.6500
+       gam: 0.1000
+       bet: 0.9000
+      lmb1: 0.1000
+      lmb2: 0.1000
+      targ: 2
+        mu: 5
+       rho: 0.8000
+     std_e: 1
+     std_u: 1
+
+</pre><img vspace="5" hspace="5" src="html-source/simulate_shocks_01.png" alt=""> <h2 id="4">Simulate a Demand Shock with an Inflation-Only Objective</h2><p>Simulate the same shock with the weight on output and interest rate in the loss function set to zero in the discretion and commitment policy models. Create two new model objects, <tt>m2i</tt> and <tt>m3i</tt>, based on the existing <tt>m2</tt> and <tt>m3</tt>, respectively, assign <tt>lmb1</tt> and <tt>lmb2</tt> zeros in both of them, solve the models with the new parameters (this is needed whenever some of the model parameters change), and repeat the simulation as above. Use the option <tt>Round=5</tt> to round the results to the 5-th decimal place because the output gap and inflation series deviate from their steady state values only by rounding errors, and the charts would be confusing (try remove the option to see what happens in the charts).</p><p>The charts show that, in theoretical models with an aggregate demand equation and a Phillips curve, the central bank is able to perfectly accommodate demand shocks to keep inflation at the target if it chooses to do so.</p><pre class="codeinput">m2i = m2;
+m2i.lmb1 = 0;
+m2i.lmb2 = 0;
+
+m3i = m3;
+m3i.lmb1 = 0;
+m3i.lmb2 = 0;
+
+m2i = solve(m2i);
+m3i = solve(m3i);
+
+s2 = simulate(m2i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>}, <span class="keyword">...</span>
+    <span class="string">'Tight='</span>, true, <span class="string">'Round='</span>, 5);
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion with Inflation in Loss Function Only'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment with Inflation in Loss Function Only'</span> <span class="keyword">...</span>
+);
+
+title(le, <span class="string">'Demand Shock with Inflation-Only Objective'</span>);
+</pre><img vspace="5" hspace="5" src="html-source/simulate_shocks_02.png" alt=""> <h2 id="5">Simulate Anticipated Future Demand Shock</h2><p>Simulate a demand shock at a future date that is anticipated a number of periods in advance. Create an input database with the demand shock placed at a future time (t=4). Note that all future shocks are by default anticipated in <tt>simulate( )</tt> unless you change the option <tt>Anticipate=</tt>. When plotting the results, highlight the time range before the shock occurs using the option <tt>Highlight=</tt>.</p><pre class="codeinput">t = 4;
+
+d = sstatedb(m2, 1:40);
+d.e(t) = 1;
+
+s1 = simulate(m1, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s2 = simulate(m2, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s1 &amp; s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>}, <span class="keyword">...</span>
+    <span class="string">'Tight='</span>, true, <span class="string">'Highlight='</span>, 0:t-1);
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Rule'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment'</span> <span class="keyword">...</span>
+    );
+
+title(le, <span class="string">'Anticipated Future Demand Shock'</span>);
+</pre><img vspace="5" hspace="5" src="html-source/simulate_shocks_03.png" alt=""> <h2 id="6">Simulate Anticipated Demand Shock with an Inflation-Only Objective</h2><p>The perfect accommodation argument made above also extends to anticipated future demand shocks. Simulate the future anticipated demand shock in the discretion and commitment models <tt>m2i</tt> and <tt>m3i</tt>, respectively, and note that neither the output gap nor inflation respond to a perfectly accommodated shock.</p><pre class="codeinput">s2 = simulate(m2i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>}, <span class="keyword">...</span>
+    <span class="string">'Tight='</span>, true, <span class="string">'Highlight='</span>, 0:t-1, <span class="string">'Round='</span>, 5);
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion with Inflation in Loss Function Only'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment with Inflation in Loss Function Only'</span> <span class="keyword">...</span>
+);
+
+title(le, <span class="string">'Anticipated Demand Shock with Inflation-Only Objective'</span>);
+</pre><img vspace="5" hspace="5" src="html-source/simulate_shocks_04.png" alt=""> <h2 id="7">Simulate a Cost-Push Shock</h2><p>Simulate a cost-push shock (shock to the Phillips curve). The simulation is designed the same way as the demand shocks above. Also, simulate the shock in the models that have only inflation in the loss function.</p><pre class="codeinput">d = sstatedb(m2, 1:40);
+d.u(1) = 1;
+
+s1 = simulate(m1, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s2 = simulate(m2, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s1 &amp; s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>}, <span class="string">'Tight='</span>, true);
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Rule'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment'</span> <span class="keyword">...</span>
+    );
+
+title(le, <span class="string">'Cost-Push Shock'</span>);
+</pre><img vspace="5" hspace="5" src="html-source/simulate_shocks_05.png" alt=""> <h2 id="8">Simulate a Cost-Push Shock with Inflation-Only Objective</h2><p>Simulate a cost-push shock in models with only inflation in the loss function, <tt>m2i</tt> and <tt>m3i</tt>. Whatever the preferences of the central bank, it cannot perfectly offset cost-push shocks: in response to such shocks, both inflation and the output gap will depart temporarily from their steady-state levels (i.e. the target and zero, respectively). The presence of cost-push shocks poses a trade-off to policymakers in these types of models.</p><pre class="codeinput">s2 = simulate(m2i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+s3 = simulate(m3i, d, 1:40, <span class="string">'AppendPresample='</span>, true);
+
+s = s2 &amp; s3;
+dbplot(s, 0:40, {<span class="string">'y'</span>, <span class="string">'pi'</span>, <span class="string">'r'</span>}, <span class="keyword">...</span>
+    <span class="string">'Tight='</span>, true, <span class="string">'Round='</span>, 5);
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion with Inflation in Loss Function Only'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment with Only Inflation in Loss Function'</span> <span class="keyword">...</span>
+);
+
+title(le, <span class="string">'Cost-Push Shock with Inflation-Only Objective'</span>);
+</pre><img vspace="5" hspace="5" src="html-source/simulate_shocks_06.png" alt=""> <h2 id="9">Show Variables and Objects Created in This File</h2><pre class="codeinput">whos
+</pre><pre class="codeoutput">  Name      Size            Bytes  Class                                  Attributes
+
+  ans       1x1                 8  matlab.ui.Figure                                 
+  d         1x1              8054  struct                                           
+  le        1x1                 8  matlab.graphics.illustration.Legend              
+  m1        1x1             21918  model                                            
+  m2        1x1             28946  model                                            
+  m2i       1x1             28882  model                                            
+  m3        1x1             30352  model                                            
+  m3i       1x1             30272  model                                            
+  s         1x1             11756  struct                                           
+  s1        1x1              6602  struct                                           
+  s2        1x1              7990  struct                                           
+  s3        1x1              7990  struct                                           
+  t         1x1                 8  double                                           
+
+</pre><h2 id="10">Help on IRIS Functions Used in This File</h2><pre>  help model/model
+  help model/subsasgn
+  help model/solve
+  help model/sstate
+  help model/sstatedb
+  help model/simulate
+  help dbase/dbplot
+  help visual/hlegend</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Simulate Simple Shocks with Optimal Policy Models
+%
+% Run three shock simulations: a demand shock, an anticipated future demand
+% shock, and a cost-push shock, to illustrate the performance of the three
+% versions of the model (a simple rule, discretionary policy, commitment
+% policy). Simulate the shocks also with loss functions that only include
+% inflation to show that monetary policy can be much more effective in
+% accommodating demand shocks that in offsetting cost-push shocks.
+%
+
+
+%% Clear the Workspace
+%
+% Clear the workspace, close all graphics figures, clear the command
+% window, and check the IRIS version.
+%
+
+clear
+close all
+clc
+irisrequired 20140319
+
+
+%% Load Discretion and Commitment Model Objects
+%
+% Load all three model objects created and saved previously in
+% |read_model|.
+%
+
+load MAT/read_models.mat m1 m2 m3
+
+%% Simulate a Demand Shock
+%
+% Simulate a demand shocks starting from a steady-state database. We use
+% the same input database for all three simulations. The input database |d|
+% must be though based on either |m2| or |m3| to include also initial
+% conditions for the Lagrange multipliers (needed in simulating the
+% commitment model |m3|).
+
+d = sstatedb(m2, 1:40); 
+d.e(1) = 1; 
+disp(d)
+
+s1 = simulate(m1, d, 1:40, 'AppendPresample=', true);
+s2 = simulate(m2, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3, d, 1:40, 'AppendPresample=', true);
+
+s = s1 & s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r'}, 'Tight=', true);
+
+le = visual.hlegend('Top', 'Rule', 'Discretion', 'Commitment');
+title(le, 'Demand Shock');
+
+
+%% Simulate a Demand Shock with an Inflation-Only Objective
+%
+% Simulate the same shock with the weight on output and interest rate in
+% the loss function set to zero in the discretion and
+% commitment policy models. Create two new model objects, |m2i| and |m3i|,
+% based on the existing |m2| and |m3|, respectively, assign |lmb1| and
+% |lmb2| zeros in both of them, solve the models with the new parameters
+% (this is needed whenever some of the model parameters change),
+% and repeat the simulation as above. Use the option |Round=5| to round the
+% results to the 5-th decimal place because the output gap and inflation
+% series deviate from their steady state values only by rounding errors,
+% and the charts would be confusing (try remove the option to see what
+% happens in the charts).
+%
+% The charts show that, in theoretical models with an aggregate demand
+% equation and a Phillips curve, the central bank is able to perfectly
+% accommodate demand shocks to keep inflation at the target if it chooses
+% to do so.
+%
+
+m2i = m2;
+m2i.lmb1 = 0; 
+m2i.lmb2 = 0;
+
+m3i = m3;
+m3i.lmb1 = 0;
+m3i.lmb2 = 0;
+
+m2i = solve(m2i);
+m3i = solve(m3i);
+
+s2 = simulate(m2i, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3i, d, 1:40, 'AppendPresample=', true);
+
+s = s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r'}, ...
+    'Tight=', true, 'Round=', 5); 
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Discretion with Inflation in Loss Function Only', ...
+    'Commitment with Inflation in Loss Function Only' ...
+);
+
+title(le, 'Demand Shock with Inflation-Only Objective');
+
+
+%% Simulate Anticipated Future Demand Shock
+%
+% Simulate a demand shock at a future date that is anticipated a number of
+% periods in advance. Create an input database with the demand shock placed
+% at a future time (t=4). Note that all future shocks are by default
+% anticipated in |simulate( )| unless you change the option |Anticipate=|.
+% When plotting the results, highlight the time range before the shock
+% occurs using the option |Highlight=|.
+
+t = 4;
+
+d = sstatedb(m2, 1:40);
+d.e(t) = 1; 
+
+s1 = simulate(m1, d, 1:40, 'AppendPresample=', true);
+s2 = simulate(m2, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3, d, 1:40, 'AppendPresample=', true);
+
+s = s1 & s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r'}, ...
+    'Tight=', true, 'Highlight=', 0:t-1); 
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Rule', ...
+    'Discretion', ...
+    'Commitment' ...
+    );
+
+title(le, 'Anticipated Future Demand Shock');
+
+
+%% Simulate Anticipated Demand Shock with an Inflation-Only Objective
+%
+% The perfect accommodation argument made above also extends to anticipated
+% future demand shocks. Simulate the future anticipated demand shock in the
+% discretion and commitment models |m2i| and |m3i|, respectively, and note
+% that neither the output gap nor inflation respond to a perfectly
+% accommodated shock.
+%
+
+s2 = simulate(m2i, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3i, d, 1:40, 'AppendPresample=', true);
+
+s = s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r'}, ...
+    'Tight=', true, 'Highlight=', 0:t-1, 'Round=', 5); 
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Discretion with Inflation in Loss Function Only', ...
+    'Commitment with Inflation in Loss Function Only' ...
+);
+
+title(le, 'Anticipated Demand Shock with Inflation-Only Objective');
+
+
+%% Simulate a Cost-Push Shock
+%
+% Simulate a cost-push shock (shock to the Phillips curve). The
+% simulation is designed the same way as the demand shocks above. Also, 
+% simulate the shock in the models that have only inflation in the loss
+% function. 
+%
+
+d = sstatedb(m2, 1:40);
+d.u(1) = 1;
+
+s1 = simulate(m1, d, 1:40, 'AppendPresample=', true);
+s2 = simulate(m2, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3, d, 1:40, 'AppendPresample=', true);
+
+s = s1 & s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r'}, 'Tight=', true);
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Rule', ...
+    'Discretion', ...
+    'Commitment' ...
+    );
+
+title(le, 'Cost-Push Shock');
+
+
+%% Simulate a Cost-Push Shock with Inflation-Only Objective
+%
+% Simulate a cost-push shock in models with only inflation in the loss
+% function, |m2i| and |m3i|. Whatever the preferences of the central bank, 
+% it cannot perfectly offset cost-push shocks: in response to such shocks, 
+% both inflation and the output gap will depart temporarily from their
+% steady-state levels (i.e. the target and zero, respectively). The
+% presence of cost-push shocks poses a trade-off to policymakers in these
+% types of models.
+%
+
+s2 = simulate(m2i, d, 1:40, 'AppendPresample=', true);
+s3 = simulate(m3i, d, 1:40, 'AppendPresample=', true);
+
+s = s2 & s3;
+dbplot(s, 0:40, {'y', 'pi', 'r'}, ...
+    'Tight=', true, 'Round=', 5); 
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Discretion with Inflation in Loss Function Only', ...
+    'Commitment with Only Inflation in Loss Function' ...
+);
+
+title(le, 'Cost-Push Shock with Inflation-Only Objective');
+
+
+%% Show Variables and Objects Created in This File
+
+whos
+
+
+%% Help on IRIS Functions Used in This File
+%
+%    help model/model
+%    help model/subsasgn
+%    help model/solve
+%    help model/sstate
+%    help model/sstatedb
+%    help model/simulate
+%    help dbase/dbplot
+%    help visual/hlegend
+%
+
+##### SOURCE END #####
+--></body></html>

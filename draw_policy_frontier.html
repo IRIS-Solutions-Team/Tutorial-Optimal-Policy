@@ -1,0 +1,428 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Draw Policy Frontier</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="draw_policy_frontier.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body { margin-left:5%; margin-right:35% }
+@media print {html body {margin-left:0px; margin-right:0px}}
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+/* tt { font-size: 1.2em; } */
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:1000%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Draw Policy Frontier</h1><!--introduction--><p>Calculate the asymptotic std deviations of inflation and output under discretionary and commitment policies for a range of different weights on output in the loss function. Use the calculated points to draw policy frontiers epicting trade-offs faced by the central bank, and compare them for the two types of policies.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear the Workspace</a></li><li><a href="#2">Load Discretion and Commitment Model Objects</a></li><li><a href="#3">Calculate ACF for a Number of Different Weights on Output</a></li><li><a href="#6">Plot and Annotate Points on Frontier</a></li><li><a href="#7">Show Variables and Objects Created in This File</a></li><li><a href="#8">Help on IRIS functions used in This File</a></li></ul></div><h2 id="1">Clear the Workspace</h2><p>Clear the workspace, close all graphics figures, clear the command window, and check the IRIS version.</p><pre class="codeinput">clear
+close <span class="string">all</span>
+clc
+irisrequired <span class="string">20140319</span>
+</pre><h2 id="2">Load Discretion and Commitment Model Objects</h2><p>Load all three model objects created and saved previously in <tt>read_model</tt>.</p><pre class="codeinput">load <span class="string">MAT/read_models.mat</span> <span class="string">m1</span> <span class="string">m2</span> <span class="string">m3</span>
+</pre><h2 id="3">Calculate ACF for a Number of Different Weights on Output</h2><p>To plot a policy frontier, calculate the model-implied std deviations of inflation and the output gap for a range of different weights on the output gap (keeping the weight on inflation the same). Create a vector of a total of N values between 0 and 1. Take the existing optimal polich models, <tt>m2</tt> and <tt>m3</tt>, create new model objects <tt>M2</tt> and <tt>M3</tt> by expanding the number of parameter variants to N, assign a range of different values (prepared in the vector <tt>lmb1</tt>) to the <tt>lmb1</tt> parameter, and reset <tt>lmb2</tt> to zero.  Calibrate the std deviations of demand and cost-push shocks to <tt>1</tt> and <tt>1.5</tt>, respectively.</p><p>As the next step, resolve the model objects with the new parameters, and call the function <tt>acf</tt> to compute the autocovariance function. By default, the function <tt>acf</tt> returns the contemporaneous autocovariance matrices (and autocorrelation matrices as a second output argument, if requested). To request higher order autocovariances, use the option <tt>Order=</tt>; here we do not need them.  Because the model objects have <tt>N=41</tt> parameter variants each, the size of the covariance matrices <tt>C2</tt> and <tt>C3</tt> in 4th dimension is 41.</p><p>The diagonal entries in the covariance matrices are the variances of the respective variables; the order of the variables in the rows and columns of the covariance matrices can be obtained by a call to the function <tt>rownames( )</tt> or <tt>colnames( )</tt>, respectively. The function <tt>select( )</tt> called with the names of the requested variables returns the appropriate covariance submatrix (a 2-by-2-by-1-by-41 submatrix in this case).</p><p>Retrieve the diagonal elements and calculate the squarte roots to get the std deviations of inflation and the output gap. Finally, transform the 1-by-1-by-1-by-41 vectors into columns vectors.</p><pre class="codeinput">N = 41;
+lmb1 = linspace(0, 1, N)
+std_e = 1;
+std_u = 1.5;
+</pre><p>Optimal discretion policy model:</p><pre class="codeinput">M2 = alter(m2, N);
+M2.lmb1 = lmb1;
+M2.lmb2 = 0;
+M2.std_e = std_e;
+M2.std_u = std_u;
+M2 = solve(M2)
+
+C2 = acf(M2);
+size(C2)
+rownames(C2)
+colnames(C2)
+
+C2 = select(C2, {<span class="string">'pi'</span>, <span class="string">'y'</span>});
+size(C2)
+
+stdpi2 = sqrt(C2(1, 1, 1, :));
+stdy2 = sqrt(C2(2, 2, 1, :));
+stdpi2 = stdpi2(:);
+stdy2 = stdy2(:);
+</pre><p>Optimal commitment model:</p><pre class="codeinput">M3 = alter(m3, N);
+M3.lmb1 = lmb1;
+M3.lmb2 = 0;
+M3.std_e = std_e;
+M3.std_u = std_u;
+M3 = solve(M3)
+
+C3 = acf(M3);
+size(C3)
+C3 = select(C3, {<span class="string">'pi'</span>, <span class="string">'y'</span>});
+size(C3)
+
+stdpi3 = sqrt(C3(1, 1, 1, :));
+stdy3 = sqrt(C3(2, 2, 1, :));
+stdpi3 = stdpi3(:);
+stdy3 = stdy3(:);
+</pre><pre class="codeoutput">
+lmb1 =
+
+  Columns 1 through 7
+
+         0    0.0250    0.0500    0.0750    0.1000    0.1250    0.1500
+
+  Columns 8 through 14
+
+    0.1750    0.2000    0.2250    0.2500    0.2750    0.3000    0.3250
+
+  Columns 15 through 21
+
+    0.3500    0.3750    0.4000    0.4250    0.4500    0.4750    0.5000
+
+  Columns 22 through 28
+
+    0.5250    0.5500    0.5750    0.6000    0.6250    0.6500    0.6750
+
+  Columns 29 through 35
+
+    0.7000    0.7250    0.7500    0.7750    0.8000    0.8250    0.8500
+
+  Columns 36 through 41
+
+    0.8750    0.9000    0.9250    0.9500    0.9750    1.0000
+
+
+M2 = 
+
+	linear model object: [41 parameter variant(s)]
+	number of equations: [0 5 0 0 0]
+	solution(s) available: [41 parameter variant(s)]
+	comment: 'Simple Optimal Policy Model File'
+	user data: empty
+	export file(s): [0]
+
+
+ans =
+
+     5     5     1    41
+
+
+ans =
+
+  1x5 cell array
+
+    {'Mu_Eq1'}    {'Mu_Eq2'}    {'y'}    {'pi'}    {'r'}
+
+
+ans =
+
+  1x5 cell array
+
+    {'Mu_Eq1'}    {'Mu_Eq2'}    {'y'}    {'pi'}    {'r'}
+
+
+ans =
+
+     2     2     1    41
+
+
+M3 = 
+
+	linear model object: [41 parameter variant(s)]
+	number of equations: [0 5 0 0 0]
+	solution(s) available: [41 parameter variant(s)]
+	comment: 'Simple Optimal Policy Model File'
+	user data: empty
+	export file(s): [0]
+
+
+ans =
+
+     5     5     1    41
+
+
+ans =
+
+     2     2     1    41
+
+</pre><h2 id="6">Plot and Annotate Points on Frontier</h2><p>Plot the policy frontiers for the two optimal policy models as points in a plane with the std deviations of inflation on the horizontal axis and the std deviations of the output gap on the vertical axis.  Annotate every 10 points on the frontier with the respective value of <tt>lmb1</tt> (the weight on output in the loss function).</p><p>The policy frontier for the optimal discretion policy model lies somewhat above the frontier for the optimal commitment policy model, a result of the fact that the central bank does not manipulate the expectations to achieve global optimum.</p><pre class="codeinput">figure();
+hold <span class="string">all</span>;
+grid <span class="string">on</span>;
+h2 = plot(stdpi2(:), stdy2(:), <span class="string">'marker'</span>, <span class="string">'.'</span>);
+h3 = plot(stdpi3(:), stdy3(:), <span class="string">'marker'</span>, <span class="string">'.'</span>);
+xlabel(<span class="string">'std dev of \pi'</span>);
+ylabel(<span class="string">'std dev of y'</span>);
+
+le = visual.hlegend( <span class="keyword">...</span>
+    <span class="string">'Top'</span>, <span class="keyword">...</span>
+    <span class="string">'Discretion'</span>, <span class="keyword">...</span>
+    <span class="string">'Commitment'</span> <span class="keyword">...</span>
+);
+
+title(le, <span class="string">'Policy Frontier'</span>);
+
+<span class="keyword">for</span> i = 1 : 10 : N
+    label = [<span class="string">'\lambda1 = '</span>, sprintf(<span class="string">'%.2f'</span>, lmb1(i))];
+
+    te = text(stdpi2(i)+0.05, stdy2(i)+0.1, label, <span class="keyword">...</span>
+        <span class="string">'color'</span>, get(h2, <span class="string">'color'</span>), <span class="string">'fontSize'</span>, 8);
+
+    text(stdpi3(i)-0.05, stdy3(i)-0.1, label, <span class="keyword">...</span>
+        <span class="string">'verticalAlignment'</span>, <span class="string">'top'</span>, <span class="string">'horizontalAlignment'</span>, <span class="string">'right'</span>, <span class="keyword">...</span>
+        <span class="string">'color'</span>, get(h3, <span class="string">'color'</span>), <span class="string">'fontSize'</span>, 8);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="html-source/draw_policy_frontier_01.png" alt=""> <h2 id="7">Show Variables and Objects Created in This File</h2><pre class="codeinput">whos
+</pre><pre class="codeoutput">  Name         Size                Bytes  Class                                   Attributes
+
+  C2           2x2x1x41             1772  namedmat                                          
+  C3           2x2x1x41             1772  namedmat                                          
+  M2           1x41                79306  model                                             
+  M3           1x41                90472  model                                             
+  N            1x1                     8  double                                            
+  ans          1x4                    32  double                                            
+  h2           1x1                     8  matlab.graphics.chart.primitive.Line              
+  h3           1x1                     8  matlab.graphics.chart.primitive.Line              
+  i            1x1                     8  double                                            
+  label        1x15                   30  char                                              
+  le           1x1                     8  matlab.graphics.illustration.Legend               
+  lmb1         1x41                  328  double                                            
+  m1           1x1                 21918  model                                             
+  m2           1x1                 28946  model                                             
+  m3           1x1                 30352  model                                             
+  std_e        1x1                     8  double                                            
+  std_u        1x1                     8  double                                            
+  stdpi2      41x1                   328  double                                            
+  stdpi3      41x1                   328  double                                            
+  stdy2       41x1                   328  double                                            
+  stdy3       41x1                   328  double                                            
+  te           1x1                     8  matlab.graphics.primitive.Text                    
+
+</pre><h2 id="8">Help on IRIS functions used in This File</h2><pre>  help model/model
+  help model/alter
+  help model/subsasgn
+  help model/solve
+  help model/acf
+  help visual/hlegend</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Draw Policy Frontier
+%
+% Calculate the asymptotic std deviations of inflation and output under
+% discretionary and commitment policies for a range of different weights on
+% output in the loss function. Use the calculated points to draw policy
+% frontiers epicting trade-offs faced by the central bank, and compare them
+% for the two types of policies.
+%
+
+
+%% Clear the Workspace
+%
+% Clear the workspace, close all graphics figures, clear the command
+% window, and check the IRIS version.
+%
+
+clear
+close all
+clc
+irisrequired 20140319
+
+
+%% Load Discretion and Commitment Model Objects
+%
+% Load all three model objects created and saved previously in
+% |read_model|.
+%
+
+load MAT/read_models.mat m1 m2 m3
+
+
+%% Calculate ACF for a Number of Different Weights on Output
+%
+% To plot a policy frontier, calculate the model-implied std deviations of
+% inflation and the output gap for a range of different weights on the
+% output gap (keeping the weight on inflation the same). Create a vector of
+% a total of N values between 0 and 1. Take the existing optimal polich
+% models, |m2| and |m3|, create new model objects |M2| and |M3| by
+% expanding the number of parameter variants to N, assign a range of
+% different values (prepared in the vector |lmb1|) to the |lmb1| parameter,
+% and reset |lmb2| to zero.  Calibrate the std deviations of demand and
+% cost-push shocks to |1| and |1.5|, respectively.
+%
+% As the next step, resolve the model objects with the new parameters, and
+% call the function |acf| to compute the autocovariance function. By
+% default, the function |acf| returns the contemporaneous autocovariance
+% matrices (and autocorrelation matrices as a second output argument, if
+% requested). To request higher order autocovariances, use the option
+% |Order=|; here we do not need them.  Because the model objects have
+% |N=41| parameter variants each, the size of the covariance matrices |C2|
+% and |C3| in 4th dimension is 41.
+%
+% The diagonal entries in the covariance matrices are the variances of the
+% respective variables; the order of the variables in the rows and columns
+% of the covariance matrices can be obtained by a call to the function
+% |rownames( )| or |colnames( )|, respectively. The function |select( )|
+% called with the names of the requested variables returns the appropriate
+% covariance submatrix (a 2-by-2-by-1-by-41 submatrix in this case).
+%
+% Retrieve the diagonal elements and calculate the squarte roots to get the
+% std deviations of inflation and the output gap. Finally, transform the
+% 1-by-1-by-1-by-41 vectors into columns vectors.
+%
+
+N = 41;
+lmb1 = linspace(0, 1, N)
+std_e = 1;
+std_u = 1.5;
+
+%%%
+%
+% Optimal discretion policy model:
+
+M2 = alter(m2, N);
+M2.lmb1 = lmb1;
+M2.lmb2 = 0;
+M2.std_e = std_e;
+M2.std_u = std_u;
+M2 = solve(M2)
+
+C2 = acf(M2);
+size(C2)
+rownames(C2)
+colnames(C2)
+
+C2 = select(C2, {'pi', 'y'});
+size(C2)
+
+stdpi2 = sqrt(C2(1, 1, 1, :));
+stdy2 = sqrt(C2(2, 2, 1, :));
+stdpi2 = stdpi2(:);
+stdy2 = stdy2(:);
+
+%%%
+%
+% Optimal commitment model:
+%
+
+M3 = alter(m3, N);
+M3.lmb1 = lmb1;
+M3.lmb2 = 0;
+M3.std_e = std_e;
+M3.std_u = std_u;
+M3 = solve(M3)
+
+C3 = acf(M3);
+size(C3)
+C3 = select(C3, {'pi', 'y'});
+size(C3)
+
+stdpi3 = sqrt(C3(1, 1, 1, :));
+stdy3 = sqrt(C3(2, 2, 1, :));
+stdpi3 = stdpi3(:);
+stdy3 = stdy3(:);
+
+%% Plot and Annotate Points on Frontier
+%
+% Plot the policy frontiers for the two optimal policy models as points in
+% a plane with the std deviations of inflation on the horizontal axis and
+% the std deviations of the output gap on the vertical axis.  Annotate
+% every 10 points on the frontier with the respective value of |lmb1| (the
+% weight on output in the loss function).
+%
+% The policy frontier for the optimal discretion policy model lies somewhat
+% above the frontier for the optimal commitment policy model, a result of
+% the fact that the central bank does not manipulate the expectations to
+% achieve global optimum.
+%
+
+figure();
+hold all;
+grid on;
+h2 = plot(stdpi2(:), stdy2(:), 'marker', '.');
+h3 = plot(stdpi3(:), stdy3(:), 'marker', '.');
+xlabel('std dev of \pi');
+ylabel('std dev of y');
+
+le = visual.hlegend( ...
+    'Top', ...
+    'Discretion', ...
+    'Commitment' ...
+);
+
+title(le, 'Policy Frontier');
+
+for i = 1 : 10 : N 
+    label = ['\lambda1 = ', sprintf('%.2f', lmb1(i))];
+    
+    te = text(stdpi2(i)+0.05, stdy2(i)+0.1, label, ...
+        'color', get(h2, 'color'), 'fontSize', 8);
+    
+    text(stdpi3(i)-0.05, stdy3(i)-0.1, label, ...
+        'verticalAlignment', 'top', 'horizontalAlignment', 'right', ...
+        'color', get(h3, 'color'), 'fontSize', 8);
+end
+
+
+%% Show Variables and Objects Created in This File
+
+whos
+
+
+%% Help on IRIS functions used in This File
+%
+%    help model/model
+%    help model/alter
+%    help model/subsasgn
+%    help model/solve
+%    help model/acf
+%    help visual/hlegend
+%
+
+##### SOURCE END #####
+--></body></html>

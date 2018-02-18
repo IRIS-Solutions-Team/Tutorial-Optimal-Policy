@@ -1,0 +1,500 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Read and Solve Models with Optimal Policy</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="read_models.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body { margin-left:5%; margin-right:35% }
+@media print {html body {margin-left:0px; margin-right:0px}}
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+/* tt { font-size: 1.2em; } */
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:1000%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Read and Solve Models with Optimal Policy</h1><!--introduction--><p>Load the model file <tt>optimal_policy.model</tt> and create three different versions of it: a model with a simple policy rule, an optimal discretionary (time-consistent) policy model, and an optimal commitment policy model. Calibrate, solve and save the model objects for further use.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear the Workspace</a></li><li><a href="#2">Prepare a Calibration Dababase</a></li><li><a href="#3">Load Three Versions of the Model</a></li><li><a href="#4">Show the Newly Created Optimal Policy Equations</a></li><li><a href="#5">Solve the Models and Compute Their Steady States</a></li><li><a href="#6">Verify Steady State</a></li><li><a href="#7">Save Model Objects for Further Use</a></li><li><a href="#8">Show Variables and Objects Created in This File</a></li><li><a href="#9">Get Help on IRIS Functions Used in This File</a></li></ul></div><h2 id="1">Clear the Workspace</h2><p>Clear workspace, close all graphics figures, clear command window, and check the IRIS version.</p><pre class="codeinput">clear
+close <span class="string">all</span>
+clc
+irisrequired <span class="string">20140319</span>
+</pre><h2 id="2">Prepare a Calibration Dababase</h2><p>Create a parameter database, <tt>P</tt>, before loading the model file. This very same parameter database will be reused in all versions of the model. We assign the database to each of the model objects.</p><pre class="codeinput">P = struct( );
+P.del1 = 0.7; 0.5;
+P.del2 = 0.1;
+P.sgm = 0.05;
+P.alp = 0.65; 0.5;
+P.gam = 0.1;
+P.bet = 0.9; 0.99;
+P.lmb1 = 0.1;
+P.lmb2 = 0.1;
+P.rho = 0.8;
+P.mu = 5;
+P.targ = 2;
+
+disp(P)
+</pre><pre class="codeoutput">    del1: 0.7000
+    del2: 0.1000
+     sgm: 0.0500
+     alp: 0.6500
+     gam: 0.1000
+     bet: 0.9000
+    lmb1: 0.1000
+    lmb2: 0.1000
+     rho: 0.8000
+      mu: 5
+    targ: 2
+
+</pre><h2 id="3">Load Three Versions of the Model</h2><p>Load the model file three times, using different combinations of the switch <tt>optimal_policy</tt> (a switch, or a control variables, defined and and used in the model file to select model equations either with a simple rule or a loss function), and the option <tt>Optimal=</tt> through which we can control the type of optimal policy request.</p><div><ol><li>Set <tt>optimal_policy=false</tt> in the model file to load the model with a simple inflation-targeting rule.</li><li>Set the control variable <tt>optimal_policy=true</tt> in the model file to load the model with a loss function, and then set the suboption <tt>Type='Commitment'</tt> in the option <tt>'Optimal'</tt> when calling the function <tt>model( )</tt> telling IRIS to calculate equations that describe discretionary optimal policy. Under discretion, expectations (the leads of variables) are taken as given, and not differentiated with respect to.</li><li>Set the control variable <tt>optimal_policy=true</tt> to load the model file with a loss function, and set the suboption <tt>Type='Commitment'</tt> in the option <tt>'Optimal'</tt> when calling the functin <tt>model( )</tt> telling IRIS to calculate equations that describe optimal commitment policy. Under commitment, expectations (the leads of variables) are internalized by the policymaker when optimizing the loss function.</li></ol></div><pre class="codeinput">m1 = model( <span class="keyword">...</span>
+    <span class="string">'optimal_policy.model'</span>, <span class="keyword">...</span>
+    <span class="string">'Linear='</span>, true, <span class="keyword">...</span>
+    <span class="string">'Assign='</span>, P, <span class="keyword">...</span>
+    <span class="string">'optimal_policy='</span>, false <span class="keyword">...</span>
+);
+
+m2 = model( <span class="keyword">...</span>
+    <span class="string">'optimal_policy.model'</span>, <span class="keyword">...</span>
+    <span class="string">'Linear='</span>, true, <span class="keyword">...</span>
+    <span class="string">'Assign='</span>, P, <span class="keyword">...</span>
+    <span class="string">'optimal_policy='</span>, true, <span class="keyword">...</span>
+    <span class="string">'Optimal='</span>, {<span class="string">'Type='</span>, <span class="string">'Discretion'</span>} <span class="keyword">...</span>
+);
+
+m3 = model( <span class="keyword">...</span>
+    <span class="string">'optimal_policy.model'</span>, <span class="keyword">...</span>
+    <span class="string">'Linear='</span>, true, <span class="string">'Assign='</span>, P, <span class="keyword">...</span>
+    <span class="string">'optimal_policy='</span>, true, <span class="keyword">...</span>
+    <span class="string">'optimal='</span>, {<span class="string">'Type='</span>, <span class="string">'Commitment'</span>} <span class="keyword">...</span>
+);
+
+disp(m1)
+disp(m2)
+disp(m3)
+</pre><pre class="codeoutput">	linear model object: [1 parameter variant(s)]
+	number of equations: [0 3 0 0 0]
+	solution(s) available: [0 parameter variant(s)]
+	comment: 'Simple Optimal Policy Model File'
+	user data: empty
+	export file(s): [0]
+
+	linear model object: [1 parameter variant(s)]
+	number of equations: [0 5 0 0 0]
+	solution(s) available: [0 parameter variant(s)]
+	comment: 'Simple Optimal Policy Model File'
+	user data: empty
+	export file(s): [0]
+
+	linear model object: [1 parameter variant(s)]
+	number of equations: [0 5 0 0 0]
+	solution(s) available: [0 parameter variant(s)]
+	comment: 'Simple Optimal Policy Model File'
+	user data: empty
+	export file(s): [0]
+
+</pre><h2 id="4">Show the Newly Created Optimal Policy Equations</h2><p>In model objects <tt>m2</tt> and <tt>m3</tt>, IRIS calculates the equations corresponding to the derivatives of the Lagrangian (consisting of the loss function and the model equations) with respect to the individual variables, and adds these equations to the model, together with the corresponding number of newly created variables, the Lagrange mutlipliers associated with individual equations (see below). Under discretion, <tt>m2</tt>, the expectations (the leads of variables) are taken as given; the terms related to the derivatives of expectations present in the <tt>m3</tt> equations are therefore missing from the <tt>m2</tt> equations.</p><pre class="codeinput">eqtn1 = get(m1, <span class="string">'Equations'</span>);
+eqtn2 = get(m2, <span class="string">'Equations'</span>);
+eqtn3 = get(m3, <span class="string">'Equations'</span>);
+
+disp(eqtn1)
+disp(eqtn2)
+disp(eqtn3)
+</pre><pre class="codeoutput">    'y=del1*y{-1}+del2*y{+1}-sgm*(r-pi{1})+e;'
+    'pi=alp*pi{-1}+(1-alp)*pi{1}+gam*y+u;'
+    'r=rho*r{-1}+(1-rho)*(targ+mu*(pi{1}-targ));'
+
+    'y=del1*y{-1}+del2*y{+1}-sgm*(r-pi{1})+e;'
+    'pi=alp*pi{-1}+(1-alp)*pi{1}+gam*y+u;'
+    '(lmb1*2*y)+(gam)*Mu_Eq2+(-1)*Mu_Eq1+(del1)*(bet)*Mu_Eq1{+1}=0;'
+    '(2*(pi-targ))+(-1)*Mu_Eq2+(alp)*(bet)*Mu_Eq2{+1}=0;'
+    '(lmb2*2*(r-r{-1}))+(lmb2*-(2*(r{+1}-r)))*(bet)+(-sgm)*Mu_Eq1=0;'
+
+    'y=del1*y{-1}+del2*y{+1}-sgm*(r-pi{1})+e;'
+    'pi=alp*pi{-1}+(1-alp)*pi{1}+gam*y+u;'
+    '(lmb1*2*y)+(gam)*Mu_Eq2+(del2)/(bet)*Mu_Eq1{-1}+(-1)*Mu_Eq1+(del1)*(bet)*Mu_Eq1{+1}=0;'
+    '(2*(pi-targ))+(1-alp)/(bet)*Mu_Eq2{-1}+(-1)*Mu_Eq2+(alp)*(bet)*Mu_Eq2{+1}+(sgm)/(bet)*Mu_Eq1{-1}=0;'
+    '(lmb2*2*(r-r{-1}))+(lmb2*-(2*(r{+1}-r)))*(bet)+(-sgm)*Mu_Eq1=0;'
+
+</pre><h2 id="5">Solve the Models and Compute Their Steady States</h2><p>All three models are linear (in the case of optimal policy models, a linear model with a quadratic loss function always results in a linear model). Calculate first their first-order solutions  (steady state does need to be known in linear models), and then, based on the dynamic solution, determine the steady state. Use the function <tt>get( )</tt> to retrieve a database with the steady-state values. The steady state values are identical for all three models. In the optimal policy models, <tt>m2</tt> and <tt>m3</tt>, the steady-state databases also include the newly created Lagrange multipliers, <tt>Mu_Eq1</tt> and <tt>Mu_Eq2</tt>.</p><pre class="codeinput">m1 = solve(m1);
+m1 = sstate(m1);
+ss1 = get(m1, <span class="string">'Steady'</span>);
+
+m2 = solve(m2);
+m2 = sstate(m2);
+ss2 = get(m2, <span class="string">'Steady'</span>);
+
+m3 = solve(m3);
+m3 = sstate(m3);
+ss3 = get(m3, <span class="string">'Steady'</span>);
+
+disp(ss1)
+disp(ss2)
+disp(ss3)
+</pre><pre class="codeoutput">         y: 0
+        pi: 2.0000
+         r: 2.0000
+         e: 0
+         u: 0
+      del1: 0.7000
+      del2: 0.1000
+       sgm: 0.0500
+       alp: 0.6500
+       gam: 0.1000
+       bet: 0.9000
+      lmb1: 0.1000
+      lmb2: 0.1000
+      targ: 2
+        mu: 5
+       rho: 0.8000
+    ttrend: 0.0000 + 1.0000i
+     std_e: 1
+     std_u: 1
+
+    Mu_Eq1: 0
+    Mu_Eq2: 0
+         y: 0
+        pi: 2.0000
+         r: 2.0000
+         e: 0
+         u: 0
+      del1: 0.7000
+      del2: 0.1000
+       sgm: 0.0500
+       alp: 0.6500
+       gam: 0.1000
+       bet: 0.9000
+      lmb1: 0.1000
+      lmb2: 0.1000
+      targ: 2
+        mu: 5
+       rho: 0.8000
+    ttrend: 0.0000 + 1.0000i
+     std_e: 1
+     std_u: 1
+
+    Mu_Eq1: 0
+    Mu_Eq2: 0
+         y: 0
+        pi: 2.0000
+         r: 2.0000
+         e: 0
+         u: 0
+      del1: 0.7000
+      del2: 0.1000
+       sgm: 0.0500
+       alp: 0.6500
+       gam: 0.1000
+       bet: 0.9000
+      lmb1: 0.1000
+      lmb2: 0.1000
+      targ: 2
+        mu: 5
+       rho: 0.8000
+    ttrend: 0.0000 + 1.0000i
+     std_e: 1
+     std_u: 1
+
+</pre><h2 id="6">Verify Steady State</h2><p>Verify that the steady state databases are identical for all three models, up to rounding errors.</p><pre class="codeinput">structfun( @(x) x(1)-x(2), ss1 &amp; ss2, <span class="string">'UniformOutput'</span>, false)
+structfun( @(x) x(1)-x(2), ss2 &amp; ss3, <span class="string">'UniformOutput'</span>, false)
+</pre><pre class="codeoutput">
+ans = 
+
+  struct with fields:
+
+         y: 0
+        pi: 5.1070e-15
+         r: 2.2204e-16
+         e: 0
+         u: 0
+      del1: 0
+      del2: 0
+       sgm: 0
+       alp: 0
+       gam: 0
+       bet: 0
+      lmb1: 0
+      lmb2: 0
+      targ: 0
+        mu: 0
+       rho: 0
+    ttrend: 0
+     std_e: 0
+     std_u: 0
+
+
+ans = 
+
+  struct with fields:
+
+    Mu_Eq1: 0
+    Mu_Eq2: 0
+         y: 0
+        pi: -6.2172e-15
+         r: 1.9762e-14
+         e: 0
+         u: 0
+      del1: 0
+      del2: 0
+       sgm: 0
+       alp: 0
+       gam: 0
+       bet: 0
+      lmb1: 0
+      lmb2: 0
+      targ: 0
+        mu: 0
+       rho: 0
+    ttrend: 0
+     std_e: 0
+     std_u: 0
+
+</pre><h2 id="7">Save Model Objects for Further Use</h2><p>Save the solved model objects to a mat-file (binary file) for further use.</p><pre class="codeinput">save <span class="string">MAT/read_models.mat</span> <span class="string">m1</span> <span class="string">m2</span> <span class="string">m3</span>
+</pre><h2 id="8">Show Variables and Objects Created in This File</h2><pre class="codeinput">whos
+</pre><pre class="codeoutput">  Name       Size            Bytes  Class     Attributes
+
+  P          1x1              2024  struct              
+  ans        1x1              3864  struct              
+  eqtn1      3x1               574  cell                
+  eqtn2      5x1              1064  cell                
+  eqtn3      5x1              1208  cell                
+  m1         1x1             21918  model               
+  m2         1x1             28946  model               
+  m3         1x1             30352  model               
+  ss1        1x1              3504  struct              
+  ss2        1x1              3872  struct              
+  ss3        1x1              3872  struct              
+
+</pre><h2 id="9">Get Help on IRIS Functions Used in This File</h2><pre>  help model/model
+  help model/get
+  help model/solve
+  help model/sstate</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Read and Solve Models with Optimal Policy
+%
+% Load the model file |optimal_policy.model| and create three different
+% versions of it: a model with a simple policy rule, an optimal
+% discretionary (time-consistent) policy model, and an optimal commitment
+% policy model. Calibrate, solve and save the model objects for further
+% use.
+
+
+%% Clear the Workspace
+%
+% Clear workspace, close all graphics figures, clear command window, and
+% check the IRIS version.
+
+clear
+close all
+clc
+irisrequired 20140319
+
+
+%% Prepare a Calibration Dababase
+%
+% Create a parameter database, |P|, before loading the model file. This
+% very same parameter database will be reused in all versions of the model.
+% We assign the database to each of the model objects.
+%
+ 
+P = struct( ); 
+P.del1 = 0.7; 0.5;
+P.del2 = 0.1;
+P.sgm = 0.05;
+P.alp = 0.65; 0.5;
+P.gam = 0.1;
+P.bet = 0.9; 0.99;
+P.lmb1 = 0.1;
+P.lmb2 = 0.1;
+P.rho = 0.8;
+P.mu = 5;
+P.targ = 2;
+
+disp(P)
+
+
+%% Load Three Versions of the Model
+%
+% Load the model file three times, using different combinations of the
+% switch |optimal_policy| (a switch, or a control variables, defined and
+% and used in the model file to select model equations either with a simple
+% rule or a loss function), and the option |Optimal=| through which we can
+% control the type of optimal policy request.
+%
+% # Set |optimal_policy=false| in the model file to load the model with a
+% simple inflation-targeting rule.
+% # Set the control variable |optimal_policy=true| in the model file to
+% load the model with a loss function, and then set the suboption
+% |Type='Commitment'| in the option |'Optimal'| when calling the function
+% |model( )| telling IRIS to calculate equations that describe
+% discretionary optimal policy. Under discretion, expectations (the leads
+% of variables) are taken as given, and not differentiated with respect to.
+% # Set the control variable |optimal_policy=true| to load the model file
+% with a loss function, and set the suboption |Type='Commitment'| in the
+% option |'Optimal'| when calling the functin |model( )| telling IRIS to
+% calculate equations that describe optimal commitment policy. Under
+% commitment, expectations (the leads of variables) are internalized by the
+% policymaker when optimizing the loss function.
+
+m1 = model( ...
+    'optimal_policy.model', ...
+    'Linear=', true, ...
+    'Assign=', P, ... 
+    'optimal_policy=', false ...
+);
+
+m2 = model( ...
+    'optimal_policy.model', ...
+    'Linear=', true, ...
+    'Assign=', P, ... 
+    'optimal_policy=', true, ... 
+    'Optimal=', {'Type=', 'Discretion'} ...
+); 
+
+m3 = model( ...
+    'optimal_policy.model', ...
+    'Linear=', true, 'Assign=', P, ...
+    'optimal_policy=', true, ...
+    'optimal=', {'Type=', 'Commitment'} ...
+);
+
+disp(m1)
+disp(m2)
+disp(m3)
+
+
+%% Show the Newly Created Optimal Policy Equations
+%
+% In model objects |m2| and |m3|, IRIS calculates the equations
+% corresponding to the derivatives of the Lagrangian (consisting of the
+% loss function and the model equations) with respect to the individual
+% variables, and adds these equations to the model, together with the
+% corresponding number of newly created variables, the Lagrange mutlipliers
+% associated with individual equations (see below). Under discretion, |m2|,
+% the expectations (the leads of variables) are taken as given; the terms
+% related to the derivatives of expectations present in the |m3| equations
+% are therefore missing from the |m2| equations.
+
+eqtn1 = get(m1, 'Equations');
+eqtn2 = get(m2, 'Equations'); 
+eqtn3 = get(m3, 'Equations'); 
+
+disp(eqtn1)
+disp(eqtn2) 
+disp(eqtn3)
+
+
+%% Solve the Models and Compute Their Steady States
+%
+% All three models are linear (in the case of optimal policy models, a
+% linear model with a quadratic loss function always results in a linear
+% model). Calculate first their first-order solutions  (steady
+% state does need to be known in linear models), and then, based on the
+% dynamic solution, determine the steady state. Use the function
+% |get( )| to retrieve a database with the steady-state values.
+% The steady state values are identical for all three models. In the
+% optimal policy models, |m2| and |m3|, the steady-state databases also
+% include the newly created Lagrange multipliers, |Mu_Eq1| and |Mu_Eq2|.
+%
+
+m1 = solve(m1); 
+m1 = sstate(m1); 
+ss1 = get(m1, 'Steady');
+
+m2 = solve(m2); 
+m2 = sstate(m2); 
+ss2 = get(m2, 'Steady');
+
+m3 = solve(m3); 
+m3 = sstate(m3);  
+ss3 = get(m3, 'Steady');
+
+disp(ss1)
+disp(ss2)
+disp(ss3)
+
+
+%% Verify Steady State
+%
+% Verify that the steady state databases are identical for all three
+% models, up to rounding errors.
+%
+
+structfun( @(x) x(1)-x(2), ss1 & ss2, 'UniformOutput', false)
+structfun( @(x) x(1)-x(2), ss2 & ss3, 'UniformOutput', false)
+
+
+%% Save Model Objects for Further Use
+%
+% Save the solved model objects to a mat-file (binary file) for further
+% use.
+
+save MAT/read_models.mat m1 m2 m3
+
+
+%% Show Variables and Objects Created in This File                         
+
+whos
+
+
+%% Get Help on IRIS Functions Used in This File
+%
+%    help model/model
+%    help model/get
+%    help model/solve
+%    help model/sstate
+%
+
+##### SOURCE END #####
+--></body></html>
