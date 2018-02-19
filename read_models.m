@@ -15,7 +15,7 @@
 clear
 close all
 clc
-irisrequired 20140319
+irisrequired 20180209
 
 
 %% Prepare a Calibration Dababase
@@ -53,13 +53,13 @@ disp(P)
 % simple inflation-targeting rule.
 % # Set the control variable |optimal_policy=true| in the model file to
 % load the model with a loss function, and then set the suboption
-% |Type='Commitment'| in the option |'Optimal'| when calling the function
+% |Type='Commitment'| in the option |Optimal=| when calling the function
 % |model( )| telling IRIS to calculate equations that describe
 % discretionary optimal policy. Under discretion, expectations (the leads
 % of variables) are taken as given, and not differentiated with respect to.
 % # Set the control variable |optimal_policy=true| to load the model file
 % with a loss function, and set the suboption |Type='Commitment'| in the
-% option |'Optimal'| when calling the functin |model( )| telling IRIS to
+% option |Optimal=| when calling the functin |model( )| telling IRIS to
 % calculate equations that describe optimal commitment policy. Under
 % commitment, expectations (the leads of variables) are internalized by the
 % policymaker when optimizing the loss function.
